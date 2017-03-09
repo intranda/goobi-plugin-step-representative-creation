@@ -7,7 +7,9 @@ import java.util.List;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.goobi.beans.Step;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.goobi.beans.Process;
+import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.enums.StepReturnValue;
@@ -25,8 +27,13 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
+import de.sub.goobi.config.ConfigPlugins;
+import de.sub.goobi.helper.enums.StepEditType;
+import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.managers.ProcessManager;
+import de.sub.goobi.persistence.managers.StepManager;
 import lombok.extern.log4j.Log4j;
 
 @PluginImplementation
@@ -40,6 +47,7 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
     private static final String REPRESENTATIVE_NAME = "_representative";
 
     private Process process;
+    private Step step;
     private String returnPath;
     private Prefs prefs;
 
@@ -60,12 +68,18 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
     @Override
     public void initialize(Step step, String returnPath) {
         this.returnPath = returnPath;
+        this.step = step; 
         this.process = step.getProzess();
         prefs = process.getRegelsatz().getPreferences();
     }
 
     @Override
     public boolean execute() {
+
+        XMLConfiguration config = ConfigPlugins.getPluginConfig(this);
+        String representativeElement = config.getString("RepresentativeStructureElement", TITLE_PAGE_NAME);
+        String errorMessage = config.getString("ErrorMessage", null);
+        String stepName = config.getString("StepName", null);
 
         try {
             Fileformat fileformat = process.readMetadataFile();
@@ -98,7 +112,7 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
             }
             DocStruct titlePage = null;
             for (DocStruct currentDocStruct : logical.getAllChildren()) {
-                if (currentDocStruct.getType().getName().equals(TITLE_PAGE_NAME)) {
+                if (currentDocStruct.getType().getName().equals(representativeElement)) {
                     titlePage = currentDocStruct;
                     break;
                 }
@@ -108,6 +122,44 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
                 if (log.isDebugEnabled()) {
                     log.debug("Found no title page in process " + process.getTitel());
                 }
+                
+                if (errorMessage != null) {
+                    ProcessManager.addLogfile(WikiFieldHelper.getWikiMessage(process.getWikifield(), "error" , errorMessage ), process.getId());
+                }
+                if (stepName != null) {
+                    List<Step> previousSteps = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " +process.getId()
+                            + " AND Reihenfolge < " + step.getReihenfolge(), 0, Integer.MAX_VALUE);
+                    Step destination = null;
+                    for (Step currentStep : previousSteps) {
+                        if (currentStep.getTitel().equals(stepName)) {
+                            destination = currentStep;
+                            break;
+                        }
+                    }
+                
+                    if (destination == null) {
+                        return false;
+                    }
+                    step.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
+                    step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
+                    step.setCorrectionStep();
+                    step.setBearbeitungsende(null);
+                    StepManager.saveStep(step);
+                    for (Step currentStep : previousSteps) {
+                        currentStep.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
+                        currentStep.setBearbeitungsstatusEnum(StepStatus.LOCKED);
+                        currentStep.setCorrectionStep();
+                        currentStep.setBearbeitungsende(null);
+                        StepManager.saveStep(currentStep);
+                        if (currentStep.getTitel().equals(stepName)) {
+                            currentStep.setBearbeitungsstatusEnum(StepStatus.OPEN);
+                            StepManager.saveStep(currentStep);
+                            return false;
+                        }
+                    }
+                    
+                }
+                
                 return true;
             }
 
