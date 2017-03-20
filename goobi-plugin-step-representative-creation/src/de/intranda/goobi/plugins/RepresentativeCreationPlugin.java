@@ -68,7 +68,7 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
     @Override
     public void initialize(Step step, String returnPath) {
         this.returnPath = returnPath;
-        this.step = step; 
+        this.step = step;
         this.process = step.getProzess();
         prefs = process.getRegelsatz().getPreferences();
     }
@@ -107,14 +107,14 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
             if (logical.getType().isAnchor()) {
                 logical = logical.getAllChildren().get(0);
             }
-            if (logical.getAllChildren() == null || logical.getAllChildren().isEmpty()) {
-                return true;
-            }
+
             DocStruct titlePage = null;
-            for (DocStruct currentDocStruct : logical.getAllChildren()) {
-                if (currentDocStruct.getType().getName().equals(representativeElement)) {
-                    titlePage = currentDocStruct;
-                    break;
+            if (logical.getAllChildren() != null && !logical.getAllChildren().isEmpty()) {
+                for (DocStruct currentDocStruct : logical.getAllChildren()) {
+                    if (currentDocStruct.getType().getName().equals(representativeElement)) {
+                        titlePage = currentDocStruct;
+                        break;
+                    }
                 }
             }
 
@@ -122,12 +122,12 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
                 if (log.isDebugEnabled()) {
                     log.debug("Found no title page in process " + process.getTitel());
                 }
-                
+
                 if (errorMessage != null) {
-                    ProcessManager.addLogfile(WikiFieldHelper.getWikiMessage(process.getWikifield(), "error" , errorMessage ), process.getId());
+                    ProcessManager.addLogfile(WikiFieldHelper.getWikiMessage(process.getWikifield(), "error", errorMessage), process.getId());
                 }
                 if (stepName != null) {
-                    List<Step> previousSteps = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " +process.getId()
+                    List<Step> previousSteps = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + process.getId()
                             + " AND Reihenfolge < " + step.getReihenfolge(), 0, Integer.MAX_VALUE);
                     Step destination = null;
                     for (Step currentStep : previousSteps) {
@@ -136,7 +136,7 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
                             break;
                         }
                     }
-                
+
                     if (destination == null) {
                         return false;
                     }
@@ -157,9 +157,9 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
                             return false;
                         }
                     }
-                    
+
                 }
-                
+
                 return true;
             }
 
