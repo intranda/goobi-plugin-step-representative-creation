@@ -15,8 +15,8 @@ Detail | Description
 **Plugin identifier**       | RepresentativeCreation
 **Plugin type**             | Step plugin
 **Licence**                 | GPL 2.0 or newer
-**Documentation (German)**  | https://docs.goobi.io/goobi-workflow-plugins-de/step/representativecreation
-**Documentation (English)** | https://docs.goobi.io/goobi-workflow-plugins-en/step/representativecreation
+**Documentation (German)**  | https://docs.goobi.io/goobi-workflow-plugins-de/step/intranda-step-representative-creation
+**Documentation (English)** | https://docs.goobi.io/goobi-workflow-plugins-en/step/intranda-step-representative-creation
 
 ## Goobi details
 
