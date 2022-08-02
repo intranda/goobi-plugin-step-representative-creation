@@ -5,12 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
-import org.goobi.beans.Step;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.goobi.beans.LogEntry;
 import org.goobi.beans.Process;
+import org.goobi.beans.Step;
 import org.goobi.production.enums.LogType;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.PluginType;
@@ -18,6 +16,15 @@ import org.goobi.production.enums.StepReturnValue;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
+import de.sub.goobi.config.ConfigPlugins;
+import de.sub.goobi.helper.enums.StepEditType;
+import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.managers.ProcessManager;
+import de.sub.goobi.persistence.managers.StepManager;
+import lombok.extern.log4j.Log4j;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -29,14 +36,6 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.config.ConfigPlugins;
-import de.sub.goobi.helper.enums.StepEditType;
-import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.managers.ProcessManager;
-import de.sub.goobi.persistence.managers.StepManager;
-import lombok.extern.log4j.Log4j;
 
 @PluginImplementation
 @Log4j
@@ -126,20 +125,20 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
                 }
 
                 if (errorMessage != null) {
-                	
-                	LogEntry logEntry = new LogEntry();
-	                logEntry.setContent(errorMessage);
-	                logEntry.setCreationDate(new Date());
-	                logEntry.setProcessId(process.getId());
-	                logEntry.setType(LogType.ERROR);
-	                
-	                ProcessManager.saveLogEntry(logEntry);
-                	
-//                    ProcessManager.addLogfile(WikiFieldHelper.getWikiMessage(process.getWikifield(), "error", errorMessage), process.getId());
+
+                    LogEntry logEntry = new LogEntry();
+                    logEntry.setContent(errorMessage);
+                    logEntry.setCreationDate(new Date());
+                    logEntry.setProcessId(process.getId());
+                    logEntry.setType(LogType.ERROR);
+
+                    ProcessManager.saveLogEntry(logEntry);
+
+                    //                    ProcessManager.addLogfile(WikiFieldHelper.getWikiMessage(process.getWikifield(), "error", errorMessage), process.getId());
                 }
                 if (stepName != null) {
                     List<Step> previousSteps = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + process.getId()
-                            + " AND Reihenfolge < " + step.getReihenfolge(), 0, Integer.MAX_VALUE);
+                    + " AND Reihenfolge < " + step.getReihenfolge(), 0, Integer.MAX_VALUE);
                     Step destination = null;
                     for (Step currentStep : previousSteps) {
                         if (currentStep.getTitel().equals(stepName)) {
@@ -198,7 +197,7 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
             }
             process.writeMetadataFile(fileformat);
 
-        } catch (ReadException | PreferencesException | WriteException | IOException | InterruptedException | SwapException | DAOException
+        } catch (ReadException | PreferencesException | WriteException | IOException | SwapException | DAOException
                 | MetadataTypeNotAllowedException e) {
             log.error(e);
             return false;
