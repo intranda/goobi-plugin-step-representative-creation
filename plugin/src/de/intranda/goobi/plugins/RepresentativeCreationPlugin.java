@@ -1,12 +1,10 @@
 package de.intranda.goobi.plugins;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
-import org.goobi.beans.LogEntry;
 import org.goobi.beans.Process;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.LogType;
@@ -17,11 +15,11 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
 import de.sub.goobi.config.ConfigPlugins;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.managers.ProcessManager;
 import de.sub.goobi.persistence.managers.StepManager;
 import lombok.extern.log4j.Log4j;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -125,16 +123,7 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
                 }
 
                 if (errorMessage != null) {
-
-                    LogEntry logEntry = new LogEntry();
-                    logEntry.setContent(errorMessage);
-                    logEntry.setCreationDate(new Date());
-                    logEntry.setProcessId(process.getId());
-                    logEntry.setType(LogType.ERROR);
-
-                    ProcessManager.saveLogEntry(logEntry);
-
-                    //                    ProcessManager.addLogfile(WikiFieldHelper.getWikiMessage(process.getWikifield(), "error", errorMessage), process.getId());
+                    Helper.addMessageToProcessJournal(process.getId(), LogType.ERROR, errorMessage, "automatic");
                 }
                 if (stepName != null) {
                     List<Step> previousSteps = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + process.getId()
