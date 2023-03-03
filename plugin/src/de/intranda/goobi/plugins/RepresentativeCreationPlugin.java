@@ -89,9 +89,9 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
 
             if (physical.getAllMetadata() != null && physical.getAllMetadata().size() > 0) {
                 for (Metadata md : physical.getAllMetadata()) {
-                    if (md.getType().getName().equals(REPRESENTATIVE_NAME)) {
+                    if (REPRESENTATIVE_NAME.equals(md.getType().getName())) {
                         try {
-                            Integer value = new Integer(md.getValue());
+                            Integer value = Integer.valueOf(md.getValue());
                             if (log.isTraceEnabled()) {
                                 log.trace("Found representative image with order " + value);
                             }
@@ -127,7 +127,7 @@ public class RepresentativeCreationPlugin implements IStepPlugin, IPlugin {
                 }
                 if (stepName != null) {
                     List<Step> previousSteps = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + process.getId()
-                    + " AND Reihenfolge < " + step.getReihenfolge(), 0, Integer.MAX_VALUE);
+                            + " AND Reihenfolge < " + step.getReihenfolge(), 0, Integer.MAX_VALUE, null);
                     Step destination = null;
                     for (Step currentStep : previousSteps) {
                         if (currentStep.getTitel().equals(stepName)) {
