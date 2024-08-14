@@ -64,3 +64,5 @@ Die Arbeitsweise des Plugins innerhalb des korrekt konfigurierten Workflows sieh
 4. Von diesem Element wird das erste zugeordnete Bild als Repräsentant gesetzt.
 5. Sollte kein Strukturelement mit diesem Namen gefunden werden oder der Datensatz enthält keine Stukturelemente, kann eine Fehlermeldung in das Vorgangslog geschrieben und der Workflow auf einen vorherigen Arbeitsschritt zurückgesetzt werden.
 6. Dies ist jedoch nur dann möglich, wenn ein Text für die Fehlermeldung und der Name des Schrittes konfiguriert wurden.
+
+![Auwahl des Plugins zur Durchführung des Arbeitsschrittes](screen1_de.png)
