@@ -56,6 +56,8 @@ Nachdem das Plugin installiert und konfiguriert wurde, kann es innerhalb eines A
 
 Dazu muss innerhalb der gewünschten Aufgabe das Plugin `RepresentativeCreation` eingetragen werden. Des Weiteren muss die Checkbox `Automatische Aufgabe` gesetzt sein.
 
+![Auwahl des Plugins zur Durchführung des Arbeitsschrittes](screen1_de.png)
+
 Die Arbeitsweise des Plugins innerhalb des korrekt konfigurierten Workflows sieht folgendermaßen aus:
 
 1. Wenn das Plugin innerhalb des Workflows aufgerufen wurde, öffnet es die METS-Datei und prüft als erstes, ob bereits ein Repräsentant definiert wurde.
@@ -64,5 +66,3 @@ Die Arbeitsweise des Plugins innerhalb des korrekt konfigurierten Workflows sieh
 4. Von diesem Element wird das erste zugeordnete Bild als Repräsentant gesetzt.
 5. Sollte kein Strukturelement mit diesem Namen gefunden werden oder der Datensatz enthält keine Stukturelemente, kann eine Fehlermeldung in das Vorgangslog geschrieben und der Workflow auf einen vorherigen Arbeitsschritt zurückgesetzt werden.
 6. Dies ist jedoch nur dann möglich, wenn ein Text für die Fehlermeldung und der Name des Schrittes konfiguriert wurden.
-
-![Auwahl des Plugins zur Durchführung des Arbeitsschrittes](screen1_de.png)
