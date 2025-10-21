@@ -3,6 +3,10 @@ title: Automatic setting of the representative
 identifier: RepresentativeCreation
 published: true
 description: This is a technical documentation for the plugin to automatically set the representative for the German National Library of Economics Kiel.
+keywords:
+    - Goobi workflow
+    - Plugin
+    - Step Plugin
 ---
 ## Introduction
 This documentation describes how to install, configure and use a plug-in to set the representative within METS files in Goobi.
