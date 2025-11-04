@@ -3,6 +3,10 @@ title: Automatisches Setzen des Repräsentanten
 identifier: RepresentativeCreation
 published: true
 description: Dies ist eine technische Dokumentation für das Plugin zum automatischen Setzen des Repräsentanten für die Deutsche Zentralbibliothek für Wirtschaftswissenschaften Kiel.
+keywords:
+    - Goobi workflow
+    - Plugin
+    - Step Plugin
 ---
 ## Einführung
 Die vorliegende Dokumentation beschreibt die Installation, Konfiguration und den Einsatz eines Plugins zum Setzen des Repräsentanten innerhalb von METS-Dateien in Goobi.
